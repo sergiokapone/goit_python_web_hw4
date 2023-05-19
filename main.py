@@ -51,7 +51,7 @@ class HttpHandler(BaseHTTPRequestHandler):
 
 
 def send_data_to_udp_server(data):
-    json_data = json.dumps(data, escape_forward_slashes=False)
+    json_data = json.dumps(data)
     encoded_data = json_data.encode("utf-8")
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -82,11 +82,12 @@ def run_Socket_server():
         while True:
             data, address = sock.recvfrom(8192)
             json_data = json.loads(data.decode("utf-8"))
-            logger.info(data.decode("utf-8"))
+            logger.info(json_data)
 
             timestamp = datetime.now().isoformat()
 
-            new_data = {timestamp: json_data}
+            new_data = {timestamp: json.loads(json_data)}
+            logger.info(new_data)
 
             with open(JSON_FILE, "r", encoding="utf-8") as file:
                 data = json.load(file)
