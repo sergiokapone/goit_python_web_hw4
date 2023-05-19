@@ -7,11 +7,7 @@ WORKDIR /app
 # Копируем все файлы проекта в рабочую директорию контейнера
 COPY . /app
 
-# Устанавливаем переменную окружения для файла данных
-ENV JSON_FILE /app/storage/data.json
-
-# Создаем каталог storage, если его нет
-RUN mkdir -p /app/storage
+RUN mkdir -p storage && touch storage/data.json
 
 # Запускаем HTTP-сервер и сервер сокетов
 CMD ["python", "main.py"]
