@@ -15,7 +15,7 @@ logger.setLevel(logging.INFO)
 HOST = "0.0.0.0"
 HTTP_PORT = 3000
 SOCKET_PORT = 5000
-JSON_FILE = "./storage/data.json"
+JSON_FILE = "c:/storage/data.json"
 
 
 class HttpHandler(BaseHTTPRequestHandler):
