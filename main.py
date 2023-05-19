@@ -96,16 +96,16 @@ def save_message_to_json(message):
 
 if __name__ == "__main__":
     threads = []
-    # Создание и запуск потока для HTTP-сервера
+    # Створення та запуск потоку для HTTP-сервера
     http_thread = threading.Thread(target=run_HTTP_server)
     http_thread.start()
     threads.append(http_thread)
 
-    # Создание и запуск потока для сервера сокетов
+    # Створення та запуск потоку для сервера сокетов
     socket_thread = threading.Thread(target=run_Socket_server)
     socket_thread.start()
     threads.append(socket_thread)
 
-    # Ожидание завершения работы потоков
+    # Очкування завершення роботи потоків
     for thread in threads:
         thread.join()
