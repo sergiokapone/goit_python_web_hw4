@@ -16,7 +16,7 @@ HOST = "0.0.0.0"
 HTTP_PORT = 3000
 SOCKET_IP = "127.0.0.1"
 SOCKET_PORT = 5000
-JSON_FILE = "c:/storage/data.json"
+JSON_FILE = "storage/data.json"
 
 
 class HttpHandler(BaseHTTPRequestHandler):
@@ -82,12 +82,10 @@ def run_Socket_server():
         while True:
             data, address = sock.recvfrom(8192)
             json_data = json.loads(data.decode("utf-8"))
-            logger.info(json_data)
 
             timestamp = datetime.now().isoformat()
 
             new_data = {timestamp: json.loads(json_data)}
-            logger.info(new_data)
 
             with open(JSON_FILE, "r", encoding="utf-8") as file:
                 data = json.load(file)
