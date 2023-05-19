@@ -42,16 +42,8 @@ class HttpHandler(BaseHTTPRequestHandler):
         data_dict = {
             key: value for key, value in [el.split("=") for el in data_parse.split("&")]
         }
-        timestamp = datetime.now().isoformat()
 
-        new_data = {timestamp: data_dict}
-
-        with open(JSON_FILE, "r", encoding="utf-8") as file:
-            data = json.load(file)
-
-        data.update(new_data)
-
-        send_data_to_udp_server(data)
+        send_data_to_udp_server(data_dict)
 
         self.send_response(302)
         self.send_header("Location", "/")
@@ -91,11 +83,20 @@ def run_Socket_server():
             data, address = sock.recvfrom(8192)
             json_data = data.decode("utf-8")
 
+            timestamp = datetime.now().isoformat()
+
+            new_data = {timestamp: json_data}
+
+            with open(JSON_FILE, "r", encoding="utf-8") as file:
+                data = json.load(file)
+
+            data.update(new_data)
+
             message = json.loads(json_data)
 
-            with open(JSON_FILE, "a", encoding="utf-8") as file:
+            with open(JSON_FILE, "w", encoding="utf-8") as file:
                 json.dump(message, file, ensure_ascii=False)
-                file.write("\n")  # Добавляем разделитель между сообщениями
+                file.write("\n")
 
 
 if __name__ == "__main__":
