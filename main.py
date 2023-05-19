@@ -14,6 +14,7 @@ logger.setLevel(logging.INFO)
 
 HOST = "0.0.0.0"
 HTTP_PORT = 3000
+SOCKET_IP = "127.0.0.1"
 SOCKET_PORT = 5000
 JSON_FILE = "c:/storage/data.json"
 
@@ -50,12 +51,25 @@ class HttpHandler(BaseHTTPRequestHandler):
 
         data.update(new_data)
 
-        with open(JSON_FILE, "w", encoding="utf-8") as file:
-            json.dump(data, file, ensure_ascii=False)
+        send_data_to_udp_server(data)
 
         self.send_response(302)
         self.send_header("Location", "/")
         self.end_headers()
+
+
+def send_data_to_udp_server(data):
+    json_data = json.dumps(data)
+    encoded_data = json_data.encode("utf-8")
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 8192)
+
+    server = (SOCKET_IP, SOCKET_PORT)
+
+    sock.sendto(encoded_data, server)
+
+    sock.close()
 
 
 def run_HTTP_server():
@@ -74,24 +88,14 @@ def run_Socket_server():
         sock.bind((HOST, SOCKET_PORT))
 
         while True:
-            data, address = sock.recvfrom(1024)
+            data, address = sock.recvfrom(8192)
             json_data = data.decode("utf-8")
 
             message = json.loads(json_data)
 
-            save_message_to_json(message)
-
-
-def save_message_to_json(message):
-    timestamp = message.get("timestamp")
-    username = message.get("username")
-    text = message.get("message")
-
-    if timestamp and username and text:
-        with open(JSON_FILE, "a") as file:
-            data = {"username": username, "message": text}
-            json.dump(data, file)
-            file.write("\n")
+            with open(JSON_FILE, "a", encoding="utf-8") as file:
+                json.dump(message, file, ensure_ascii=False)
+                file.write("\n")  # Добавляем разделитель между сообщениями
 
 
 if __name__ == "__main__":
