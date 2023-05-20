@@ -1,4 +1,5 @@
 import json
+import os
 import socket
 import urllib.parse
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -17,6 +18,11 @@ HTTP_PORT = 3000
 SOCKET_IP = "127.0.0.1"
 SOCKET_PORT = 5000
 JSON_FILE = "storage/data.json"
+
+if not os.path.isfile(JSON_FILE):
+    data = {}
+    with open(JSON_FILE, "w") as file:
+        json.dump(data, file)
 
 
 class HttpHandler(BaseHTTPRequestHandler):
