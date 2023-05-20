@@ -49,7 +49,7 @@ class HttpHandler(BaseHTTPRequestHandler):
             key: value for key, value in [el.split("=") for el in data_parse.split("&")]
         }
 
-        send_data_to_udp_server(json.dumps(data_dict))
+        send_data_to_udp_server(json.dumps(data_dict, ensure_ascii=False))
 
         self.send_response(302)
         self.send_header("Location", "/")
@@ -83,12 +83,12 @@ def run_Socket_server():
 
         while True:
             data, address = sock.recvfrom(8192)
-            json_data = json.loads(data.decode("utf-8"))
+            json_data = json.loads(json.loads(data.decode("utf-8")))
             timestamp = datetime.now().isoformat()
 
             with open(JSON_FILE, "r+", encoding="utf-8") as file:
                 data = json.load(file)
-                data[timestamp] = json.loads(json_data)
+                data[timestamp] = json_data
                 file.seek(0)
                 json.dump(data, file, ensure_ascii=False)
                 file.truncate()
