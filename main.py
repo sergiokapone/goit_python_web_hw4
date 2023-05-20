@@ -82,7 +82,7 @@ def run_Socket_server():
         sock.bind((HOST, SOCKET_PORT))
 
         while True:
-            data, address = sock.recvfrom(8192)
+            data, _ = sock.recvfrom(8192)
             json_data = json.loads(data.decode("utf-8"))
             timestamp = datetime.now().isoformat()
 
