@@ -84,18 +84,14 @@ def run_Socket_server():
         while True:
             data, address = sock.recvfrom(8192)
             json_data = json.loads(data.decode("utf-8"))
-
             timestamp = datetime.now().isoformat()
 
-            new_data = {timestamp: json.loads(json_data)}
-
-            with open(JSON_FILE, "r", encoding="utf-8") as file:
+            with open(JSON_FILE, "r+", encoding="utf-8") as file:
                 data = json.load(file)
-
-            data.update(new_data)
-
-            with open(JSON_FILE, "w", encoding="utf-8") as file:
+                data[timestamp] = json.loads(json_data)
+                file.seek(0)
                 json.dump(data, file, ensure_ascii=False)
+                file.truncate()
 
 
 if __name__ == "__main__":
