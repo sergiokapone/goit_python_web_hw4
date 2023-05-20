@@ -44,7 +44,7 @@ class HttpHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         data = self.rfile.read(int(self.headers["Content-Length"]))
-        data_parse = urllib.parse.unquote_plus(data.decode())
+        data_parse = urllib.parse.unquote_plus(data.decode("utf-8"))
         data_dict = {
             key: value for key, value in [el.split("=") for el in data_parse.split("&")]
         }
@@ -60,14 +60,10 @@ def send_data_to_udp_server(data):
     json_data = json.dumps(data)
     encoded_data = json_data.encode("utf-8")
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 8192)
-
-    server = (SOCKET_IP, SOCKET_PORT)
-
-    sock.sendto(encoded_data, server)
-
-    sock.close()
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 8192)
+        server = (SOCKET_IP, SOCKET_PORT)
+        sock.sendto(encoded_data, server)
 
 
 def run_HTTP_server():
