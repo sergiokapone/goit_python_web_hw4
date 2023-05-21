@@ -27,13 +27,14 @@ if not os.path.isfile(JSON_FILE):
 
 class HttpHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        pr_url = urllib.parse.urlparse(self.path)
-        if pr_url.path == "/":
-            self.send_html_file("index.html")
-        elif pr_url.path == "/message":
-            self.send_html_file("message.html")
-        else:
-            self.send_html_file("error.html", 404)
+        route = urllib.parse.urlparse(self.path)
+        match route.path:
+            case "/":
+                self.send_html_file("index.html")
+            case "/message":
+                self.send_html_file("message.html")
+            case _:
+                self.send_html_file("error.html", 404)
 
     def send_html_file(self, filename, status=200):
         self.send_response(status)
